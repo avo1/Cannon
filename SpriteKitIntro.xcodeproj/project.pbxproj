@@ -14,6 +14,8 @@
 		18FF67431D2AB0D600C009AB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18FF67411D2AB0D600C009AB /* Main.storyboard */; };
 		18FF67451D2AB0D600C009AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18FF67441D2AB0D600C009AB /* Assets.xcassets */; };
 		18FF67481D2AB0D600C009AB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18FF67461D2AB0D600C009AB /* LaunchScreen.storyboard */; };
+		18FF67501D2AC29C00C009AB /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18FF674F1D2AC29C00C009AB /* MainMenu.sks */; };
+		18FF67521D2AC2C800C009AB /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FF67511D2AC2C800C009AB /* MainMenu.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		18FF67441D2AB0D600C009AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		18FF67471D2AB0D600C009AB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		18FF67491D2AB0D600C009AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18FF674F1D2AC29C00C009AB /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
+		18FF67511D2AC2C800C009AB /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,8 @@
 			children = (
 				18FF67391D2AB0D600C009AB /* AppDelegate.swift */,
 				18FF673B1D2AB0D600C009AB /* GameScene.sks */,
+				18FF674F1D2AC29C00C009AB /* MainMenu.sks */,
+				18FF67511D2AC2C800C009AB /* MainMenu.swift */,
 				18FF673D1D2AB0D600C009AB /* GameScene.swift */,
 				18FF673F1D2AB0D600C009AB /* GameViewController.swift */,
 				18FF67411D2AB0D600C009AB /* Main.storyboard */,
@@ -132,6 +138,7 @@
 				18FF673C1D2AB0D600C009AB /* GameScene.sks in Resources */,
 				18FF67481D2AB0D600C009AB /* LaunchScreen.storyboard in Resources */,
 				18FF67451D2AB0D600C009AB /* Assets.xcassets in Resources */,
+				18FF67501D2AC29C00C009AB /* MainMenu.sks in Resources */,
 				18FF67431D2AB0D600C009AB /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,6 +153,7 @@
 				18FF673E1D2AB0D600C009AB /* GameScene.swift in Sources */,
 				18FF67401D2AB0D600C009AB /* GameViewController.swift in Sources */,
 				18FF673A1D2AB0D600C009AB /* AppDelegate.swift in Sources */,
+				18FF67521D2AC2C800C009AB /* MainMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,6 +303,7 @@
 				18FF674E1D2AB0D600C009AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
