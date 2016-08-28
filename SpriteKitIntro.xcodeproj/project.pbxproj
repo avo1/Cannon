@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0448F30E1D72ED5900C5D7E7 /* Ball.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0448F30D1D72ED5900C5D7E7 /* Ball.sks */; };
 		18FF673A1D2AB0D600C009AB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FF67391D2AB0D600C009AB /* AppDelegate.swift */; };
 		18FF673C1D2AB0D600C009AB /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18FF673B1D2AB0D600C009AB /* GameScene.sks */; };
 		18FF673E1D2AB0D600C009AB /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18FF673D1D2AB0D600C009AB /* GameScene.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0448F30D1D72ED5900C5D7E7 /* Ball.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Ball.sks; sourceTree = "<group>"; };
 		18FF67361D2AB0D600C009AB /* SpriteKitIntro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpriteKitIntro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FF67391D2AB0D600C009AB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		18FF673B1D2AB0D600C009AB /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 			children = (
 				18FF67391D2AB0D600C009AB /* AppDelegate.swift */,
 				18FF673B1D2AB0D600C009AB /* GameScene.sks */,
+				0448F30D1D72ED5900C5D7E7 /* Ball.sks */,
 				18FF674F1D2AC29C00C009AB /* MainMenu.sks */,
 				18FF67511D2AC2C800C009AB /* MainMenu.swift */,
 				18FF673D1D2AB0D600C009AB /* GameScene.swift */,
@@ -135,6 +138,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0448F30E1D72ED5900C5D7E7 /* Ball.sks in Resources */,
 				18FF673C1D2AB0D600C009AB /* GameScene.sks in Resources */,
 				18FF67481D2AB0D600C009AB /* LaunchScreen.storyboard in Resources */,
 				18FF67451D2AB0D600C009AB /* Assets.xcassets in Resources */,
