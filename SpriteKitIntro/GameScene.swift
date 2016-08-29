@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 // Set these bits to be the same with the category mask in the physics definition
 let wallMask: UInt32 = 0x1 << 0     // 1
@@ -18,13 +19,45 @@ let orangePegMask: UInt32 = 0x1 << 4   // 16
 class GameScene: SKScene {
     var myLabel: SKLabelNode!
     var cannon: SKSpriteNode!
+    var block: SKSpriteNode!
+    var bucket: SKSpriteNode!
+    var background: SKAudioNode!
+    
     var touchLocation: CGPoint = CGPointZero
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         cannon = self.childNodeWithName("cannon_full") as! SKSpriteNode
+        block = self.childNodeWithName("block") as! SKSpriteNode
+        bucket = self.childNodeWithName("bucket") as! SKSpriteNode
         self.physicsWorld.contactDelegate = self
         
+        let rads = -CGFloat(M_PI / 2.0)
+        let action = SKAction.rotateByAngle(rads, duration: 1)
+        block.runAction(SKAction.repeatActionForever(action))
+        
+        let rightMove = SKAction.moveByX(840.0, y: 0.0, duration: 2)
+        rightMove.timingMode = .EaseInEaseOut
+        let leftMove = SKAction.moveByX(-840.0, y: 0.0, duration: 2)
+        leftMove.timingMode = .EaseInEaseOut
+        let seq = SKAction.sequence([rightMove, leftMove])
+        bucket.runAction(SKAction.repeatActionForever(seq))
+        
+        // Set the background audio, why crash?
+        //background = SKAudioNode(fileNamed: "bg.mp3")
+        //self.addChild(background)
+
+        // Preload the audio
+        do {
+            let sounds = ["cannon", "hit"]
+            for sound in sounds {
+                let player = try AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(sound, ofType: "wav")!))
+                player.prepareToPlay()
+            }
+        } catch {
+            print("error when loading audio")
+        }
+
         // Setup the label
         myLabel = SKLabelNode(fontNamed: "Chalkduster")
         myLabel.text = "Ready"
@@ -63,6 +96,10 @@ class GameScene: SKScene {
         ball.physicsBody?.collisionBitMask = wallMask | ballMask | pegMask | orangePegMask
         // enable the notification if the ball contacts anything, including the square
         ball.physicsBody?.contactTestBitMask = ball.physicsBody!.collisionBitMask | squareMask
+        self.runAction(SKAction.playSoundFileNamed("cannon.wav", waitForCompletion: true))
+        
+        // Remove the sound when game starts
+        //background.runAction(SKAction.stop())
     }
     
     override func update(currentTime: CFTimeInterval) {
@@ -99,5 +136,7 @@ extension GameScene: SKPhysicsContactDelegate {
         spark.particleColor = (peg.categoryBitMask == orangePegMask) ? orange : blue
         self.addChild(spark)
         peg.node!.removeFromParent()
+        
+        self.runAction(SKAction.playSoundFileNamed("hit.wav", waitForCompletion: true))
     }
 }
