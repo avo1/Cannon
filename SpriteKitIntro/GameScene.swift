@@ -8,10 +8,12 @@
 
 import SpriteKit
 
+// Set these bits to be the same with the category mask in the physics definition
 let wallMask: UInt32 = 0x1 << 0     // 1
 let ballMask: UInt32 = 0x1 << 1     // 2
 let pegMask: UInt32 = 0x1 << 2      // 4
 let squareMask: UInt32 = 0x1 << 3   // 8
+let orangePegMask: UInt32 = 0x1 << 4   // 16
 
 class GameScene: SKScene {
     var myLabel: SKLabelNode!
@@ -57,7 +59,10 @@ class GameScene: SKScene {
         let vx = CGFloat(cosf(angleInRadians)) * speed
         let vy = CGFloat(sinf(angleInRadians)) * speed
         ball.physicsBody?.applyImpulse(CGVectorMake(vx, vy))
-        ball.physicsBody?.collisionBitMask = wallMask | ballMask | pegMask
+        // enable the ball to be collide with all but the square
+        ball.physicsBody?.collisionBitMask = wallMask | ballMask | pegMask | orangePegMask
+        // enable the notification if the ball contacts anything, including the square
+        ball.physicsBody?.contactTestBitMask = ball.physicsBody!.collisionBitMask | squareMask
     }
     
     override func update(currentTime: CFTimeInterval) {
@@ -70,6 +75,29 @@ class GameScene: SKScene {
 
 extension GameScene: SKPhysicsContactDelegate {
     func didBeginContact(contact: SKPhysicsContact) {
-        print("booom")
+        let ball = (contact.bodyA.categoryBitMask == ballMask) ? contact.bodyA : contact.bodyB
+        let other = (ball == contact.bodyA) ? contact.bodyB : contact.bodyA
+        if (other.categoryBitMask == pegMask || other.categoryBitMask == orangePegMask) {
+            print("hit peg")
+            didHitPeg(other)
+        } else if (other.categoryBitMask == orangePegMask) {
+            print("hit orange peg")
+        } else if (other.categoryBitMask == wallMask) {
+            print("hit wall")
+        } else if (other.categoryBitMask == squareMask) {
+            print("hit square")
+        } else if (other.categoryBitMask == ballMask) {
+            print("hit ball")
+        }
+    }
+    
+    func didHitPeg(peg: SKPhysicsBody) {
+        let blue = UIColor(red: 0.16, green: 0.73, blue: 0.78, alpha: 1.0)
+        let orange = UIColor(red: 1.0, green: 0.45, blue: 0.0, alpha: 1.0)
+        let spark = SKEmitterNode(fileNamed: "SparkParticle")!
+        spark.position = peg.node!.position
+        spark.particleColor = (peg.categoryBitMask == orangePegMask) ? orange : blue
+        self.addChild(spark)
+        peg.node!.removeFromParent()
     }
 }
