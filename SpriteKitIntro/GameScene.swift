@@ -22,67 +22,71 @@ class GameScene: SKScene {
     var block: SKSpriteNode!
     var bucket: SKSpriteNode!
     var background: SKAudioNode!
+    var followCam: SKCameraNode!
+    var nodeToFollow: SKNode!
     
-    var touchLocation: CGPoint = CGPointZero
+    var touchLocation: CGPoint = CGPoint.zero
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         /* Setup your scene here */
-        cannon = self.childNodeWithName("cannon_full") as! SKSpriteNode
-        block = self.childNodeWithName("block") as! SKSpriteNode
-        bucket = self.childNodeWithName("bucket") as! SKSpriteNode
+        cannon = self.childNode(withName: "cannon_full") as! SKSpriteNode
+        block = self.childNode(withName: "block") as! SKSpriteNode
+        bucket = self.childNode(withName: "bucket") as! SKSpriteNode
+        followCam = self.childNode(withName: "camera") as! SKCameraNode
+        
         self.physicsWorld.contactDelegate = self
         
         let rads = -CGFloat(M_PI / 2.0)
-        let action = SKAction.rotateByAngle(rads, duration: 1)
-        block.runAction(SKAction.repeatActionForever(action))
+        let action = SKAction.rotate(byAngle: rads, duration: 1)
+        block.run(SKAction.repeatForever(action))
         
-        let rightMove = SKAction.moveByX(840.0, y: 0.0, duration: 2)
-        rightMove.timingMode = .EaseInEaseOut
-        let leftMove = SKAction.moveByX(-840.0, y: 0.0, duration: 2)
-        leftMove.timingMode = .EaseInEaseOut
+        let rightMove = SKAction.moveBy(x: 840.0, y: 0.0, duration: 2)
+        rightMove.timingMode = .easeInEaseOut
+        let leftMove = SKAction.moveBy(x: -840.0, y: 0.0, duration: 2)
+        leftMove.timingMode = .easeInEaseOut
         let seq = SKAction.sequence([rightMove, leftMove])
-        bucket.runAction(SKAction.repeatActionForever(seq))
+        bucket.run(SKAction.repeatForever(seq))
         
         // Set the background audio, why crash?
         //background = SKAudioNode(fileNamed: "bg.mp3")
         //self.addChild(background)
-
+        
         // Preload the audio
         do {
             let sounds = ["cannon", "hit"]
             for sound in sounds {
-                let player = try AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(sound, ofType: "wav")!))
+                let player = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: sound, ofType: "wav")!))
                 player.prepareToPlay()
             }
         } catch {
             print("error when loading audio")
         }
-
+        
         // Setup the label
         myLabel = SKLabelNode(fontNamed: "Chalkduster")
         myLabel.text = "Ready"
         myLabel.fontSize = 72
-        myLabel.fontColor = UIColor.redColor()
-        myLabel.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+        myLabel.fontColor = UIColor.red
+        myLabel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         self.addChild(myLabel)
         
         // Setup the boundary
-        self.physicsBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         physicsBody?.categoryBitMask = wallMask
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch begins */
-        touchLocation = touches.first!.locationInNode(self)
+        touchLocation = touches.first!.location(in: self)
         myLabel.removeFromParent()
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        touchLocation = touches.first!.locationInNode(self)
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchLocation = touches.first!.location(in: self)
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let ball: SKSpriteNode = SKScene(fileNamed: "Ball")!.childNodeWithName("ball") as! SKSpriteNode
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let ball: SKSpriteNode = SKScene(fileNamed: "Ball")!.childNode(withName: "ball") as! SKSpriteNode
         ball.removeFromParent()
         self.addChild(ball)
         ball.zPosition = 0
@@ -91,27 +95,34 @@ class GameScene: SKScene {
         let speed = CGFloat(100.0)
         let vx = CGFloat(cosf(angleInRadians)) * speed
         let vy = CGFloat(sinf(angleInRadians)) * speed
-        ball.physicsBody?.applyImpulse(CGVectorMake(vx, vy))
+        ball.physicsBody?.applyImpulse(CGVector(dx: vx, dy: vy))
         // enable the ball to be collide with all but the square
         ball.physicsBody?.collisionBitMask = wallMask | ballMask | pegMask | orangePegMask
         // enable the notification if the ball contacts anything, including the square
         ball.physicsBody?.contactTestBitMask = ball.physicsBody!.collisionBitMask | squareMask
-        self.runAction(SKAction.playSoundFileNamed("cannon.wav", waitForCompletion: true))
+        self.run(SKAction.playSoundFileNamed("cannon.wav", waitForCompletion: true))
         
         // Remove the sound when game starts
         //background.runAction(SKAction.stop())
+        
+        nodeToFollow = ball
+        followCam.run(SKAction.scale(to: 0.75, duration: 0.5))
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         let percent = touchLocation.x / size.width
         let newAngle = percent * 180 - 180
         cannon.zRotation = CGFloat(newAngle) * CGFloat(M_PI) / 180.0
+        
+        if nodeToFollow != nil {
+            followCam.position = nodeToFollow.position
+        }
     }
 }
 
 extension GameScene: SKPhysicsContactDelegate {
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
         let ball = (contact.bodyA.categoryBitMask == ballMask) ? contact.bodyA : contact.bodyB
         let other = (ball == contact.bodyA) ? contact.bodyB : contact.bodyA
         if (other.categoryBitMask == pegMask || other.categoryBitMask == orangePegMask) {
@@ -128,7 +139,7 @@ extension GameScene: SKPhysicsContactDelegate {
         }
     }
     
-    func didHitPeg(peg: SKPhysicsBody) {
+    func didHitPeg(_ peg: SKPhysicsBody) {
         let blue = UIColor(red: 0.16, green: 0.73, blue: 0.78, alpha: 1.0)
         let orange = UIColor(red: 1.0, green: 0.45, blue: 0.0, alpha: 1.0)
         let spark = SKEmitterNode(fileNamed: "SparkParticle")!
@@ -137,6 +148,6 @@ extension GameScene: SKPhysicsContactDelegate {
         self.addChild(spark)
         peg.node!.removeFromParent()
         
-        self.runAction(SKAction.playSoundFileNamed("hit.wav", waitForCompletion: true))
+        self.run(SKAction.playSoundFileNamed("hit.wav", waitForCompletion: true))
     }
 }
